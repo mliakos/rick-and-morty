@@ -1,4 +1,7 @@
-.App {
+@import '~antd/dist/antd.css';
+
+
+App {
   text-align: center;
 }
 
