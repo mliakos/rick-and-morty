@@ -1,31 +1,21 @@
 import React, { useCallback, useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { FETCH_CHARACTERS_QUERY } from '../api';
 
 import Hero from './Hero';
-import { List, Divider, notification, Alert } from 'antd';
+import { List, Divider, Alert } from 'antd';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Loader from './Loader';
 import SearchHero from './SearchHero';
-
-import { IHero } from '../@types';
-
-notification.config({ maxCount: 3 });
+import { useFetchAllCharacters } from '../api';
 
 const HeroList: React.FC = () => {
   const [filterName, setFilterName] = useState('');
-  const { loading, data, fetchMore, refetch, error } = useQuery(FETCH_CHARACTERS_QUERY, {
-    variables: { page: 1, filterName }
-  });
-  const heroes: IHero[] = data?.characters?.results || [];
+  const { loading, data, fetchMore, refetch, error } = useFetchAllCharacters(filterName);
+  const heroes = data?.characters?.results || [];
   const info = data?.characters.info;
 
-  const handleOnSearch = useCallback(
-    (query: string) => {
-      refetch({ page: 1, filterName });
-    },
-    [refetch, filterName]
-  );
+  const handleOnSearch = useCallback(() => {
+    refetch({ page: 1, filterName });
+  }, [refetch, filterName]);
 
   return (
     <>
@@ -50,7 +40,7 @@ const HeroList: React.FC = () => {
         <InfiniteScroll
           dataLength={heroes.length}
           next={() => fetchMore({ variables: { page: info.next, filterName } })}
-          hasMore={info?.next}
+          hasMore={!!info?.next}
           loader={<></>}
           endMessage={<Divider plain>{"That's all folks!"}</Divider>}
           scrollableTarget="scrollable">
