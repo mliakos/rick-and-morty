@@ -12,7 +12,7 @@ type Props = {
 const SearchHero: React.FC<Props> = ({ loading, handleOnSearch, handleOnChange }) => {
   return (
     <Row justify="center">
-      <Col span={8}>
+      <Col xs={24} sm={12} md={8}>
         <Search
           loading={loading}
           style={{ marginTop: 50 }}
