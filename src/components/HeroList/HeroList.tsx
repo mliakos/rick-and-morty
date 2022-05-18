@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
 
-import Hero from './Hero';
+import Hero from '../Hero';
 import { List, Divider, Alert } from 'antd';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import Loader from './Loader';
-import SearchHero from './SearchHero';
-import { useFetchAllCharacters } from '../api';
+import Loader from '../Loader';
+import SearchHero from '../SearchHero';
+import { useFetchAllCharacters } from '../../api';
 
 const HeroList: React.FC = () => {
   const [filterName, setFilterName] = useState('');
