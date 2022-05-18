@@ -1,28 +1,57 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { FETCH_CHARACTERS_QUERY } from '../api';
 
 import Hero from './Hero';
-import { List, Skeleton, Divider } from 'antd';
+import { List, Divider, notification, Alert } from 'antd';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Loader from './Loader';
+import SearchHero from './SearchHero';
 
 import { IHero } from '../@types';
 
+notification.config({ maxCount: 3 });
+
 const HeroList: React.FC = () => {
-  const { loading, data, fetchMore } = useQuery(FETCH_CHARACTERS_QUERY, { variables: { page: 1 } });
+  const [filterName, setFilterName] = useState('');
+  const { loading, data, fetchMore, refetch, error } = useQuery(FETCH_CHARACTERS_QUERY, {
+    variables: { page: 1, filterName }
+  });
   const heroes: IHero[] = data?.characters?.results || [];
   const info = data?.characters.info;
-  console.log(data);
+
+  const handleOnSearch = useCallback(
+    (query: string) => {
+      refetch({ page: 1, filterName });
+    },
+    [refetch, filterName]
+  );
+
   return (
-    <div>
+    <>
+      <SearchHero
+        loading={loading}
+        handleOnSearch={handleOnSearch}
+        handleOnChange={(query: string) => setFilterName(query)}
+      />
+      {error && (
+        <Alert
+          message="Error"
+          description={error.message}
+          type="error"
+          closable
+          style={{ marginTop: 20 }}
+        />
+      )}
+
       {loading ? (
-        <div>loading...</div>
+        <Loader />
       ) : (
         <InfiniteScroll
           dataLength={heroes.length}
-          next={() => fetchMore({ variables: { page: info.next } })}
-          hasMore={info.next}
-          loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+          next={() => fetchMore({ variables: { page: info.next, filterName } })}
+          hasMore={info?.next}
+          loader={<></>}
           endMessage={<Divider plain>{"That's all folks!"}</Divider>}
           scrollableTarget="scrollable">
           <List
@@ -36,7 +65,7 @@ const HeroList: React.FC = () => {
               xl: 5,
               xxl: 5
             }}
-            dataSource={heroes}
+            dataSource={error ? [] : heroes}
             renderItem={(item) => (
               <List.Item>
                 <Hero key={item.id} hero={item} />
@@ -45,7 +74,7 @@ const HeroList: React.FC = () => {
           />
         </InfiniteScroll>
       )}
-    </div>
+    </>
   );
 };
 
