@@ -3,7 +3,7 @@ import { Row, Col } from 'antd';
 
 const Loader: React.FC = () => {
   return (
-    <Row justify="center" style={{ marginTop: 50 }}>
+    <Row justify="center" style={{ marginTop: 50 }} data-testid="loader">
       <Col span={1}>
         <LoadingOutlined style={{ fontSize: '50px' }} />
       </Col>

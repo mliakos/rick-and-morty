@@ -26,6 +26,7 @@ const HeroList: React.FC = () => {
       />
       {error && (
         <Alert
+          data-testid="error-container"
           message="Error"
           description={error.message}
           type="error"
@@ -37,32 +38,34 @@ const HeroList: React.FC = () => {
       {loading ? (
         <Loader />
       ) : (
-        <InfiniteScroll
-          dataLength={heroes.length}
-          next={() => fetchMore({ variables: { page: info.next, filterName } })}
-          hasMore={!!info?.next}
-          loader={<></>}
-          endMessage={<Divider plain>{"That's all folks!"}</Divider>}
-          scrollableTarget="scrollable">
-          <List
-            style={{ marginTop: 50 }}
-            grid={{
-              gutter: 16,
-              xs: 1,
-              sm: 2,
-              md: 4,
-              lg: 5,
-              xl: 5,
-              xxl: 5
-            }}
-            dataSource={error ? [] : heroes}
-            renderItem={(item) => (
-              <List.Item>
-                <Hero key={item.id} hero={item} />
-              </List.Item>
-            )}
-          />
-        </InfiniteScroll>
+        <div data-testid="list-container">
+          <InfiniteScroll
+            dataLength={heroes.length}
+            next={() => fetchMore({ variables: { page: info.next, filterName } })}
+            hasMore={!!info?.next}
+            loader={<></>}
+            endMessage={<Divider plain>{"That's all folks!"}</Divider>}
+            scrollableTarget="scrollable">
+            <List
+              style={{ marginTop: 50 }}
+              grid={{
+                gutter: 16,
+                xs: 1,
+                sm: 2,
+                md: 4,
+                lg: 5,
+                xl: 5,
+                xxl: 5
+              }}
+              dataSource={error ? [] : heroes}
+              renderItem={(item) => (
+                <List.Item>
+                  <Hero key={item.id} hero={item} />
+                </List.Item>
+              )}
+            />
+          </InfiniteScroll>
+        </div>
       )}
     </>
   );
